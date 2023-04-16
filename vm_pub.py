@@ -6,20 +6,25 @@ import time
 from datetime import datetime
 import socket
 
+user = "mihirsin"
+
 """This function (or "callback") will be executed when this client receives 
 a connection acknowledgement packet response from the server. """
+
+
 def on_connect(client, userdata, flags, rc):
     print("Connected to server (i.e., broker) with result code "+str(rc))
 
 
 if __name__ == '__main__':
-    #get IP address
-    ip_address=0 
+    # get IP address
+    ip_address = socket.gethostbyname(socket.gethostname())
     """your code here"""
-    #create a client object
+
+    # create a client object
     client = mqtt.Client()
-    
-    #attach the on_connect() callback function defined above to the mqtt client
+
+    # attach the on_connect() callback function defined above to the mqtt client
     client.on_connect = on_connect
     """Connect using the following hostname, port, and keepalive interval (in 
     seconds). We added "host=", "port=", and "keepalive=" for illustrative 
@@ -32,7 +37,8 @@ if __name__ == '__main__':
     client. If the connection request is successful, the callback attached to
     `client.on_connect` will be called."""
 
-    client.connect(host="eclipse.usc.edu", port=11000, keepalive=60)
+    # client.connect(host="eclipse.usc.edu", port=11000, keepalive=60)
+    client.connect(host="localhost", keepalive=60)
 
     """ask paho-mqtt to spawn a separate thread to handle
     incoming and outgoing mqtt messages."""
@@ -40,12 +46,16 @@ if __name__ == '__main__':
     time.sleep(1)
 
     while True:
-        #replace user with your USC username in all subscriptions
-        client.publish("user/ipinfo", f"{ip_address}")
+        # replace user with your USC username in all subscriptions
+        client.publish(f"{user}/ipinfo", f"{ip_address}")
         print("Publishing ip address")
         time.sleep(4)
 
-        #get date and time 
+        # get date and time
         """your code here"""
-        #publish date and time in their own topics
+        time_now = datetime.now().strftime("%m-%d-%Y %H:%M")
+
+        # publish date and time in their own topics
         """your code here"""
+        client.publish(f"{user}/date", f"{time_now}")
+        print("Publishing date")
